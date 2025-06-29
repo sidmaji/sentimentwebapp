@@ -1,0 +1,47 @@
+/* src/index.css */
+@import "tailwindcss";
+
+/* Define custom variant for dark mode */
+/* stylelint-disable-next-line at-rule-no-unknown */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Define theme variables */
+/* stylelint-disable-next-line at-rule-no-unknown */
+@theme {
+  /* Light mode variables */
+  --color-bg-primary: #f3f4f6; /* gray-100 */
+  --color-bg-secondary: #ffffff; /* white */
+  --color-bg-card: #ffffff; /* white */
+  --color-text-primary: #111827; /* gray-900 */
+  --color-text-secondary: #374151; /* gray-700 */
+  --color-text-muted: #6b7280; /* gray-500 */
+  --color-border: #e5e7eb; /* gray-200 */
+  --color-test: #ef4444; /* red-500 */
+}
+
+/* Dark mode overrides using @layer theme */
+@layer theme {
+  .dark {
+    --color-bg-primary: #111827; /* gray-900 */
+    --color-bg-secondary: #1f2937; /* gray-800 */
+    --color-bg-card: #1f2937; /* gray-800 */
+    --color-text-primary: #f9fafb; /* gray-50 */
+    --color-text-secondary: #d1d5db; /* gray-300 */
+    --color-text-muted: #9ca3af; /* gray-400 */
+    --color-border: #4b5563; /* gray-600 */
+    --color-test: #22c55e; /* green-500 */
+  }
+}
+
+/* Test with manual CSS to verify DOM manipulation works */
+.manual-test {
+  background-color: #ef4444; /* red-500 */
+  color: white;
+  padding: 8px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.dark .manual-test {
+  background-color: #22c55e; /* green-500 */
+}
