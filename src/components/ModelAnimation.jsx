@@ -31,6 +31,12 @@ const ModelAnimation = ({ model }) => {
         }
     }
 
+    const handleStepClick = (stepIndex) => {
+        if (completedSteps.includes(stepIndex)) {
+            setCurrentStep(stepIndex)
+        }
+    }
+
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
             <div className="p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200" onClick={() => setIsExpanded(!isExpanded)}>
@@ -65,12 +71,13 @@ const ModelAnimation = ({ model }) => {
                         {model.steps.map((step, index) => (
                             <div
                                 key={index}
-                                className={`relative bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border-2 transition-all duration-300 ${
+                                onClick={() => handleStepClick(index)}
+                                className={`relative bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border-2 transition-all duration-300 cursor-pointer ${
                                     isPlaying && index === currentStep
                                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                                         : completedSteps.includes(index)
-                                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                        : 'border-gray-200 dark:border-gray-600'
+                                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30'
+                                        : 'border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
                                 }`}
                             >
                                 {/* Step Number */}
@@ -89,7 +96,7 @@ const ModelAnimation = ({ model }) => {
                                 {/* Step Content */}
                                 <div className="pt-2">
                                     <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{step.title}</h4>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">{step.description || getStepDescription(step.title)}</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">{step.explanation}</p>
                                 </div>
 
                                 {/* Progress Indicator */}
@@ -98,49 +105,37 @@ const ModelAnimation = ({ model }) => {
                         ))}
                     </div>
 
-                    {/* Connecting Arrows */}
-                    <div className="hidden md:flex justify-between items-center mb-6 px-4">
-                        {Array.from({ length: model.steps.length - 1 }).map((_, index) => (
-                            <div
-                                key={index}
-                                className={`flex-1 flex justify-center transition-colors duration-300 ${completedSteps.includes(index) ? 'text-green-500' : 'text-gray-300 dark:text-gray-600'}`}
-                            >
-                                <svg className="w-8 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6l6 6-6 6-1.41-1.41z" />
-                                </svg>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Code Display - Show all completed steps and current playing step */}
+                    {/* Code Display - Show completed steps and current playing step */}
                     <div className="space-y-6">
-                        {model.steps.map(
-                            (step, index) =>
-                                (completedSteps.includes(index) || (isPlaying && index === currentStep)) && (
-                                    <div key={index} className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                                Step {index + 1}: {step.title}
-                                            </h4>
-                                            {completedSteps.includes(index) && <span className="text-green-500 text-sm">✓ Completed</span>}
-                                        </div>
-                                        <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                                            {isPlaying && index === currentStep ? (
-                                                <TypewriterEffect text={step.code} onComplete={handleStepComplete} speed={30} />
-                                            ) : (
-                                                <pre className="text-green-400 text-sm font-mono whitespace-pre-wrap">{step.code}</pre>
-                                            )}
-                                        </div>
+                        {model.steps.map((step, index) => {
+                            const shouldShow = completedSteps.includes(index) || (isPlaying && index === currentStep)
+                            if (!shouldShow) return null
+
+                            return (
+                                <div key={`step-${index}-${step.title}`} className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                            Step {index + 1}: {step.title}
+                                        </h4>
+                                        {completedSteps.includes(index) && <span className="text-green-500 text-sm">✓ Completed</span>}
                                     </div>
-                                )
-                        )}
+                                    <div className="bg-gray-900 rounded-lg overflow-hidden">
+                                        {isPlaying && index === currentStep ? (
+                                            <TypewriterEffect text={step.code} onComplete={handleStepComplete} speed={30} canSkip={true} />
+                                        ) : (
+                                            <pre className="bg-gray-900 text-green-400 text-sm font-mono whitespace-pre-wrap p-4 rounded">{step.code}</pre>
+                                        )}
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
 
                     {/* Next Button */}
                     {showNextButton && (
                         <div className="flex justify-center mt-6">
                             <button onClick={handleNext} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
-                                <span>Next Step</span>
+                                <span>{currentStep < model.steps.length - 1 ? 'Next Step' : 'Complete'}</span>
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>
@@ -151,22 +146,6 @@ const ModelAnimation = ({ model }) => {
             )}
         </div>
     )
-}
-
-// Helper function to provide step descriptions
-const getStepDescription = (title) => {
-    const descriptions = {
-        'Text Vectorization': 'Convert text into numerical vectors using TF-IDF',
-        'Model Training': 'Train the logistic regression model on vectorized data',
-        Prediction: 'Make sentiment predictions on new text',
-        'Text Tokenization': 'Break down text into tokens for BERT processing',
-        'Model Inference': 'Run the FinBERT model to get sentiment predictions',
-        'Confidence Scoring': 'Calculate confidence scores for predictions',
-        'Prompt Engineering': 'Craft effective prompts for the language model',
-        'API Request': 'Send request to the o4-mini API endpoint',
-        'Response Processing': 'Parse and format the API response',
-    }
-    return descriptions[title] || 'Processing step in the pipeline'
 }
 
 export default ModelAnimation

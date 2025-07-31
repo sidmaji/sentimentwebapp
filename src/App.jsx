@@ -1,5 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import LandingPage from './components/LandingPage'
+import MultivariateForecasting from './components/MultivariateForecasting'
 import SentimentAnalysis from './components/SentimentAnalysis'
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/sentiment-analysis" element={<SentimentAnalysis />} />
+                    <Route path="/multivariate-forecasting" element={<MultivariateForecasting />} />
                 </Routes>
             </div>
         </Router>

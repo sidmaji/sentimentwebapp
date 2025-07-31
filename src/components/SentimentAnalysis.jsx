@@ -22,7 +22,7 @@ function SentimentAnalysis() {
                 {
                     name: 'Logistic Regression',
                     url: 'https://xb2ia3u3iycroj2mmiev7bk4si0iorlt.lambda-url.us-east-2.on.aws/',
-                    hasConfidence: false,
+                    hasConfidence: true,
                 },
                 {
                     name: 'FinBERT',
