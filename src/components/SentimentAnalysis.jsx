@@ -34,6 +34,16 @@ function SentimentAnalysis() {
                     url: 'https://oye2e3js2vb6fmvjffuz5m5p6i0ztcne.lambda-url.us-east-2.on.aws/',
                     hasConfidence: false,
                 },
+                {
+                    name: 'GPT-4.1-mini',
+                    url: 'https://hyjt3i2ifndrl3lshtadbavega0tshcs.lambda-url.us-east-2.on.aws/',
+                    hasConfidence: false,
+                },
+                {
+                    name: 'GPT-4.1-mini (Fine-Tuned)',
+                    url: 'https://qroayxlg56s5d6nckwocpcnxee0ozpfi.lambda-url.us-east-2.on.aws/',
+                    hasConfidence: false,
+                },
             ]
 
             // Make API calls in parallel
